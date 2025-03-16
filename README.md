@@ -1,3 +1,3 @@
-# Website Frontend
+# My personal sites frontend.
 
-Currently just a react router stub but will grow.
+

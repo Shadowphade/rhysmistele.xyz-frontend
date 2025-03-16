@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router";
 
 export default function Navbar() {
 
     const [hidden, setHidden] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -22,22 +23,13 @@ export default function Navbar() {
     }, [lastScrollY]);
 
     return (
-        <nav className=
-        {   `fixed
-            w-2/3
-            items-center
-            bg-gray-900
-            text-white
-            p-4
-            transition-transform
-            duration-300
-            ${ hidden ? "-translate-y-full" : "translate-y-0"}`
-        }>
-            <div className="container mx-auto flex justify-between">
-                <h1 className="text-xl font-bold">Rhys' Web Site</h1>
-                <ul className="flex space-x-4">
-                    <li>About</li>
-                    <li>Articles</li>
+        <nav className="main-nav">
+            <div className="main-nav-container">
+                <h1 className="main-nav-title">Rhys' Web Site</h1>
+                <ul className="main-nav-link-list">
+                    <li><button onClick={() => {navigate("/");}}> Home </button></li>
+                    <li><button onClick={() => {navigate("/projects");}}> Projects </button></li>
+                    <li><button onClick={() => {navigate("/articles");}}> Articles </button></li>
                 </ul>
             </div>
         </nav>

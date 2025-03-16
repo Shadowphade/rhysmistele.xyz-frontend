@@ -1,0 +1,63 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.main-nav {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 66.67vw;
+    transform: translateX(-50%);
+    background-color: #333;
+    padding: 10px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Optional shadow */
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.main-nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Styles the title */
+.main-nav-title {
+    color: white;
+    font-size: 1.5rem;
+    margin-right: 20px;
+}
+
+/* Styles the navigation links */
+.main-nav-link-list {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+.main-nav-link-list li {
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.content-container {
+    width: 60vw; /* Half of the viewport width */
+    height: 70vh;
+    margin: 20px auto; /* Center horizontally with some top margin */
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    color: white; /* Ensures text is readable */
+    border-radius: 15px; /* Rounded corners */
+    text-align: left; /* Left-justified text */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Optional shadow */
+    overflow-y: auto;
+}
