@@ -1,7 +1,6 @@
 
 
 
-
 function Projects() {
     return (
         <div className="content-container">

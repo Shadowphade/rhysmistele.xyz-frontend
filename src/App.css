@@ -4,6 +4,15 @@
   padding: 2rem;
   text-align: center;
 }
+.background-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1; /* behind everything */
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* allows clicks to pass through */
+}
 
 .main-nav {
     position: absolute;
