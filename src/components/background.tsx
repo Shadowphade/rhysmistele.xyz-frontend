@@ -31,10 +31,6 @@ export default function Background() {
         const canvas = canvasRef.current;
         if (canvas == null) return;
 
-        for(let i = 0; i < 1; i++){
-            particles.current.push(createRandomParticle(canvas));
-        }
-
 
         const context = canvas.getContext('2d');
         if (context == null) return;
@@ -42,11 +38,12 @@ export default function Background() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
-            for(let i = 0; i < 10; i++){
-                particles.current.push(createRandomParticle(canvas));
-            }
+            particles.current = createArrayParticle(canvas.width / 2, canvas.height / 2, 50, 50, 3, 3);
+            console.log(particles.current);
             draw();
         };
+
+
 
         const draw_particles = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, particles: particle[], connection_list: particle_connection[]) => {
 
@@ -55,19 +52,15 @@ export default function Background() {
                     if (particles[i] == particles[k]) continue;
 
                     if(get_distance(particles[i], particles[k]) < 20) {
-                        //console.log("particle too close")
 
-                        // particles[i].speed = particles[k].speed;
-                        // particles[k].speed = particles[k].speed + 1;
                         add_particle_connection(particles[i], particles[k], connection_list);
                         set_distance(particles[i], particles[k], 15);
                     }
                 }
             }
             for (let i = 0; i < particles.length; i++) {
-                update_particle_state(particles[i]);
-                draw_particle_connections(canvas, context, particles[i]);
-                draw_particle(canvas, context, particles[i]);
+                //update_particle_state(canvas, particles[i]);
+                draw_particle(context, particles[i]);
             }
         }
 
@@ -94,7 +87,7 @@ export default function Background() {
     return <canvas ref={canvasRef} className='background-canvas' />;
 }
 
-function update_particle_state(particle: particle) {
+function update_particle_state(canvas: HTMLCanvasElement, particle: particle) {
     let virtualParticle: particle = {
         x_pos: particle.direction_vec.x,
         y_pos: particle.direction_vec.y,
@@ -102,32 +95,38 @@ function update_particle_state(particle: particle) {
         speed: 0,
     }
 
-    for(let i = 0; i < particle.connected_particles.length; i++){
-        let tmp = particle.connected_particles[i].particle;
-        if(tmp != null){
-            if(get_distance(particle, tmp) > 200) {
-                console.log(get_distance(particle, tmp));
-                remove_particle_connection(particle, tmp);
-                particle.connected_particles.splice(i, i);
-            }
-        }
-
+    if (particle.x_pos > canvas.width) {
+        particle.x_pos = 25;
+    }
+    if (particle.y_pos > canvas.height) {
+        particle.y_pos = 25;
+    }
+    if (particle.x_pos < 0) {
+        particle.x_pos = canvas.width - 25;
+    }
+    if (particle.y_pos < 0) {
+        particle.y_pos = canvas.height - 25;
     }
 
-    set_distance(particle, virtualParticle, particle.speed/2);
+    let speed = get_distance(particle, virtualParticle);
+    let tmp = virtualParticle;
+
+    set_distance(particle, virtualParticle, speed/2);
+
+    particle.direction_vec.x = tmp.x_pos;
+    particle.direction_vec.y = tmp.y_pos;
 }
 
-function draw_particle_connections(_canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, particle: particle) {
-
-    for(let i = 0; i < particle.connected_particles.length; i++) {
-        if(particle.connected_particles[i].particle == null) continue;
-        context.beginPath();
-        context.moveTo(particle.x_pos, particle.y_pos);
-        //@ts-ignore;
-        context.lineTo(particle.connected_particles[i].particle.x_pos, particle.connected_particles[i].particle.y_pos);
-        context.stroke();
-    }
-}
+// function draw_particle_connections(_canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, connection_list: particle_connection[]) {
+//
+//     for(let i = 0; i < connection_list.length; i++) {
+//         context.beginPath();
+//         context.moveTo(connection_list[i].particleA.x_pos, connection_list[i].particleA.y_pos);
+//         //@ts-ignore;
+//         context.lineTo(connection_list[i].particleB.x_pos,connection_list[i].particleB.y_pos);
+//         context.stroke();
+//     }
+// }
 
 function get_distance(particleA: particle, particleB: particle): number {
     let x_delta = particleB.x_pos - particleA.x_pos;
@@ -145,7 +144,6 @@ function set_distance(particleA: particle, particleB: particle, distance: number
 
     let length = Math.sqrt((cur_distance_x * cur_distance_x) + (cur_distance_y * cur_distance_y));
 
-
     let unit_vec_x = cur_distance_x / length;
     let unit_vec_y = cur_distance_y / length;
 
@@ -159,29 +157,7 @@ function set_distance(particleA: particle, particleB: particle, distance: number
     particleA.direction_vec.y = particleB.y_pos;
 }
 
-function draw_particle(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, particle: particle) {
-    if (particle.x_pos > canvas.width) {
-
-        particle.x_pos = 25;
-        particle.direction_vec.x = particle.direction_vec.y;
-    }
-    if (particle.y_pos > canvas.height) {
-
-        particle.y_pos = 25;
-        particle.direction_vec.y = particle.direction_vec.x;
-    }
-    if (particle.x_pos < 0) {
-
-        particle.speed = particle.speed - 1;
-        particle.x_pos = canvas.width - 25;
-        particle.direction_vec.x = particle.direction_vec.y;
-
-    }
-    if (particle.y_pos < 0) {
-
-        particle.y_pos = canvas.height - 25;
-        particle.direction_vec.y = particle.direction_vec.x;
-    }
+function draw_particle(context: CanvasRenderingContext2D, particle: particle) {
 
     context.beginPath();
     context.arc(particle.x_pos, particle.y_pos, 10 , 0, 2 * Math.PI);
@@ -192,17 +168,43 @@ function draw_particle(canvas: HTMLCanvasElement, context: CanvasRenderingContex
 
 
 function createRandomParticle(canvas: HTMLCanvasElement): particle {
+//     let rand_x = Math.random() * canvas.width;
+//     let rand_y = Math.random() * canvas.height;
     var output: particle = {
-        x_pos: Math.floor(Math.random() * canvas.width),
-        y_pos: Math.floor(Math.random() * canvas.height),
-        direction_vec: {x: Math.floor(Math.random() * canvas.width), y: Math.floor(Math.random() * canvas.height)},
-        speed: Math.floor(Math.random()+1 * 3),
+        x_pos: Math.floor(canvas.width/2),
+        y_pos: Math.floor(canvas.height/2),
+        direction_vec: {
+            x: Math.floor(Math.random() * ((canvas.width/2 + 25) - (canvas.width/2 - 25)) + canvas.width/2 - 25),
+            y: Math.floor(Math.random() * ((canvas.height/2 + 25) - (canvas.height/2 - 25)) + canvas.height/2 - 25),
+        },
+        speed: Math.floor(Math.random() + 1 * 3),
     };
 
     return output;
 }
 
-function add_particle_connection(particleA: particle, particleB: particle, connection_list: particle_connection) {
+function createArrayParticle(start_x: number, start_y: number, spacing_x: number, spacing_y: number, size_x: number, size_y: number): particle[] {
+    let output: particle[] = [];
+
+    for(let i = 0; i < size_x; i++) {
+        for (let j = 0; j < size_y; j++) {
+            let new_particle: particle = {
+                x_pos: start_x + i * spacing_x,
+                y_pos: start_y + i * spacing_y,
+                direction_vec: {
+                        x: start_x + (size_x * spacing_x) / 2,
+                        y: start_y + (size_y * spacing_y) / 2,
+                },
+                speed: 1,
+            }
+            output.push(new_particle);
+        }
+    }
+
+    return output;
+}
+
+function add_particle_connection(particleA: particle, particleB: particle, connection_list: particle_connection[]) {
     let new_connection: particle_connection = {
         particleA: particleA,
         particleB: particleB,
@@ -212,14 +214,14 @@ function add_particle_connection(particleA: particle, particleB: particle, conne
     connection_list.push(new_connection);
 }
 
-function remove_particle_connection(particleA: particle, particleB: particle, connection_list: particle_connection[]) {
-    for(let i = 0; i < connection_list.length; i++) {
-        if (
-            (connection_list[i].particleA == particleA || connection_list[i].particleA == particleB)
-            &&
-            (connection_list[i].particleB == particleA || connection_list[i].particleB == particleB)
-        ) {
-            connection_list.splice(i,i);
-        }
-    }
-}
+// function remove_particle_connection(particleA: particle, particleB: particle, connection_list: particle_connection[]) {
+//     for(let i = 0; i < connection_list.length; i++) {
+//         if (
+//             (connection_list[i].particleA == particleA || connection_list[i].particleA == particleB)
+//             &&
+//             (connection_list[i].particleB == particleA || connection_list[i].particleB == particleB)
+//         ) {
+//             connection_list.splice(i,i);
+//         }
+//     }
+// }
