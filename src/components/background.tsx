@@ -1,12 +1,6 @@
 
 import { useRef, useEffect } from 'react';
 
-type particle_connection = {
-    particleA: particle;
-    particleB: particle;
-    connection_strength: number;
-}
-
 type particle = {
     x_pos: number;
     y_pos: number;
@@ -19,7 +13,7 @@ type particle = {
 export default function Background() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const particles = useRef<Array<particle>>([]);
-    const particle_connections = useRef<Array<particle_connection>>([]);
+    const particle_connections = useRef<Array<Array<boolean>>>([]);
     const colors = useRef<Array<number>>([]);
     colors.current.push(0);
     colors.current.push(0);
@@ -37,38 +31,32 @@ export default function Background() {
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-
-            particles.current = createArrayParticle(canvas.width / 2, canvas.height / 2, 50, 50, 3, 3);
             console.log(particles.current);
             draw();
         };
+        particles.current = createArrayParticle(25, 25, canvas.width / 3, canvas.height / 3, 3, 3);
+        particle_connections.current = create_particle_connections(particles.current);
 
-
-
-        const draw_particles = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, particles: particle[], connection_list: particle_connection[]) => {
+        const draw_particles = (_canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, particles: particle[], _connection_list: Array<Array<boolean>>) => {
 
             for( let i = 0; i < particles.length; i++) {
                 for (let k = 1; k < particles.length; k++) {
                     if (particles[i] == particles[k]) continue;
 
                     if(get_distance(particles[i], particles[k]) < 20) {
-
-                        add_particle_connection(particles[i], particles[k], connection_list);
                         set_distance(particles[i], particles[k], 15);
                     }
                 }
             }
+            draw_particle_connections(canvas, context, particle_connections.current, particles);
             for (let i = 0; i < particles.length; i++) {
-                //update_particle_state(canvas, particles[i]);
                 draw_particle(context, particles[i]);
+                update_particle_state(canvas, particles, particle_connections.current);
             }
         }
 
         const draw = () => {
             context.clearRect(0, 0, canvas.width, canvas.height);
-
-            //console.log(colors.current);
-            //console.log(particles);
             draw_particles(canvas, context, particles.current, particle_connections.current);
         };
 
@@ -87,46 +75,100 @@ export default function Background() {
     return <canvas ref={canvasRef} className='background-canvas' />;
 }
 
-function update_particle_state(canvas: HTMLCanvasElement, particle: particle) {
-    let virtualParticle: particle = {
-        x_pos: particle.direction_vec.x,
-        y_pos: particle.direction_vec.y,
-        direction_vec: {x: 0, y: 0},
-        speed: 0,
-    }
 
-    if (particle.x_pos > canvas.width) {
-        particle.x_pos = 25;
-    }
-    if (particle.y_pos > canvas.height) {
-        particle.y_pos = 25;
-    }
-    if (particle.x_pos < 0) {
-        particle.x_pos = canvas.width - 25;
-    }
-    if (particle.y_pos < 0) {
-        particle.y_pos = canvas.height - 25;
-    }
+function update_particle_state(canvas: HTMLCanvasElement, particles: particle[], particle_connection: Array<Array<boolean>>) {
+    for(let i = 0; i < particles.length; i++) {
 
-    let speed = get_distance(particle, virtualParticle);
-    let tmp = virtualParticle;
+        let connection_count = 0;
+        let connection_average_x = 0;
+        let connection_average_y = 0;
+        for(let j = 0; j < particles.length; j++) {
+            if (particle_connection[i][j]) {
+                set_distance(particles[i], particles[j], - particles[i].speed / 50);
+            }
+        }
 
-    set_distance(particle, virtualParticle, speed/2);
+        let virtual_particle: particle = {
+            x_pos: particles[i].direction_vec.x,
+            y_pos: particles[i].direction_vec.y,
+            direction_vec: {x:0, y:0},
+            speed: 0,
+        }
 
-    particle.direction_vec.x = tmp.x_pos;
-    particle.direction_vec.y = tmp.y_pos;
+        let sign_x = Math.ceil((Math.random() - 0.5) * 2) < 1 ? -1 : 1;
+        let new_x = Math.floor(Math.random() * (100 - 10 + 1) + 1);
+        let sign_y = Math.ceil((Math.random() - 0.5) * 2) < 1 ? -1 : 1;
+        let new_y = Math.floor(Math.random() * (100 - 10 + 1) + 1);
+
+        set_distance(particles[i], virtual_particle, particles[i].speed / 10);
+
+        particles[i].direction_vec.x = particles[i].direction_vec.x + (sign_x * new_x);
+        particles[i].direction_vec.y = particles[i].direction_vec.y + (sign_y * new_y);
+
+        if (particles[i].x_pos > canvas.width) {
+            particles[i].direction_vec.x = -1 * particles[i].direction_vec.x;
+
+        }
+        if (particles[i].y_pos > canvas.height) {
+            particles[i].direction_vec.y = -1 * particles[i].direction_vec.y;
+        }
+        if (particles[i].x_pos < 0) {
+            particles[i].direction_vec.x = -1 * particles[i].direction_vec.x;
+        }
+        if (particles[i].y_pos < 0) {
+            particles[i].direction_vec.y = -1 * particles[i].direction_vec.y;
+        }
+    }
 }
 
-// function draw_particle_connections(_canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, connection_list: particle_connection[]) {
-//
-//     for(let i = 0; i < connection_list.length; i++) {
-//         context.beginPath();
-//         context.moveTo(connection_list[i].particleA.x_pos, connection_list[i].particleA.y_pos);
-//         //@ts-ignore;
-//         context.lineTo(connection_list[i].particleB.x_pos,connection_list[i].particleB.y_pos);
-//         context.stroke();
-//     }
-// }
+
+function draw_particle_connections(_canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, connection_list: Array<Array<boolean>>, particles: particle[]) {
+
+    for(let i = 0; i < particles.length; i++) {
+        let particleA = particles[i];
+        for(let j = 0; j < particles.length; j++) {
+            //console.log(connection_list);
+            if(connection_list[i][j] == true) {
+
+                let particleB = particles[j];
+                context.beginPath();
+                context.moveTo(particleA.x_pos, particleA.y_pos);
+                context.lineTo(particleB.x_pos, particleB.y_pos);
+                context.lineWidth = 4;
+                context.strokeStyle = "rgb(101, 109, 201)";
+                context.stroke();
+            }
+        }
+    }
+
+}
+// for the time being it will be random
+function create_particle_connections(particles: particle[]): Array<Array<boolean>> {
+    let output = new Array<Array<boolean>>
+
+    for(let i = 0; i < particles.length; i++) {
+        output.push(new Array<boolean>);
+        for(let j = 0; j < particles.length; j++) {
+            output[i].push(false);
+        }
+    }
+
+    for( let i = 0; i < particles.length; i++) {
+        for( let j = 0; j < particles.length; j++){
+            if (i == j) {output[i][j] = false; continue;}
+            let new_connection = Math.random();
+            if (new_connection < 0.10) {
+                output[i][j] = false;
+            } else {
+
+                output[i][j] = true;
+                console.log(output);
+            }
+        }
+    }
+    return output;
+
+}
 
 function get_distance(particleA: particle, particleB: particle): number {
     let x_delta = particleB.x_pos - particleA.x_pos;
@@ -158,9 +200,10 @@ function set_distance(particleA: particle, particleB: particle, distance: number
 }
 
 function draw_particle(context: CanvasRenderingContext2D, particle: particle) {
-
     context.beginPath();
     context.arc(particle.x_pos, particle.y_pos, 10 , 0, 2 * Math.PI);
+    context.fillStyle = "rgb(255, 255, 255, )";
+    context.fill();
     context.lineWidth = 4;
     context.strokeStyle = "rgb(101, 109, 201)";
     context.stroke();
@@ -190,7 +233,7 @@ function createArrayParticle(start_x: number, start_y: number, spacing_x: number
         for (let j = 0; j < size_y; j++) {
             let new_particle: particle = {
                 x_pos: start_x + i * spacing_x,
-                y_pos: start_y + i * spacing_y,
+                y_pos: start_y + j * spacing_y,
                 direction_vec: {
                         x: start_x + (size_x * spacing_x) / 2,
                         y: start_y + (size_y * spacing_y) / 2,
@@ -204,15 +247,6 @@ function createArrayParticle(start_x: number, start_y: number, spacing_x: number
     return output;
 }
 
-function add_particle_connection(particleA: particle, particleB: particle, connection_list: particle_connection[]) {
-    let new_connection: particle_connection = {
-        particleA: particleA,
-        particleB: particleB,
-        connection_strength: particleA.speed + particleB.speed / 2,
-    }
-
-    connection_list.push(new_connection);
-}
 
 // function remove_particle_connection(particleA: particle, particleB: particle, connection_list: particle_connection[]) {
 //     for(let i = 0; i < connection_list.length; i++) {
