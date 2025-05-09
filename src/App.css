@@ -65,7 +65,7 @@
     left: 50%;
     margin: auto; /* Center horizontally with some top margin */
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    background-color: rgba(0, 0, 0, 0.75); /* Semi-transparent black */
     color: white; /* Ensures text is readable */
     border-radius: 15px; /* Rounded corners */
     text-align: left; /* Left-justified text */
