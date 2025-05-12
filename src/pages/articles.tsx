@@ -1,6 +1,6 @@
 
 
-function Articles() {
+export function Articles() {
     return (
         <div className="content-container">
             <h1>Articles</h1>
@@ -10,4 +10,10 @@ function Articles() {
     );
 }
 
-export default Articles;
+export function Article() {
+    return (
+        <div>
+
+        </div>
+    );
+}

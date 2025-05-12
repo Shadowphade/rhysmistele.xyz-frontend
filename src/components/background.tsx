@@ -79,9 +79,9 @@ export default function Background() {
 function update_particle_state(canvas: HTMLCanvasElement, particles: particle[], particle_connection: Array<Array<boolean>>) {
     for(let i = 0; i < particles.length; i++) {
 
-        let connection_count = 0;
-        let connection_average_x = 0;
-        let connection_average_y = 0;
+//         let connection_count = 0;
+//         let connection_average_x = 0;
+//         let connection_average_y = 0;
         for(let j = 0; j < particles.length; j++) {
             if (particle_connection[i][j]) {
                 set_distance(particles[i], particles[j], - particles[i].speed / 50);
@@ -209,7 +209,7 @@ function draw_particle(context: CanvasRenderingContext2D, particle: particle) {
     context.stroke();
 }
 
-
+/*
 function createRandomParticle(canvas: HTMLCanvasElement): particle {
 //     let rand_x = Math.random() * canvas.width;
 //     let rand_y = Math.random() * canvas.height;
@@ -224,7 +224,7 @@ function createRandomParticle(canvas: HTMLCanvasElement): particle {
     };
 
     return output;
-}
+}*/
 
 function createArrayParticle(start_x: number, start_y: number, spacing_x: number, spacing_y: number, size_x: number, size_y: number): particle[] {
     let output: particle[] = [];

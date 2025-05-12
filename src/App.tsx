@@ -8,9 +8,10 @@ function App() {
 
   return (
     <>
-        <Background />
+
         <Navbar />
         <Outlet />
+        <Background />
     </>
   )
 }

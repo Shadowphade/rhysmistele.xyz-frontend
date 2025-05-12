@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 
 export default function Navbar() {
 
-    const [hidden, setHidden] = useState(false);
+    const [_hidden, setHidden] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
     const navigate = useNavigate();
 
