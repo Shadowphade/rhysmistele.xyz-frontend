@@ -1,15 +1,25 @@
 #root {
-  max-width: 1280px;
+  /*max-width: 100vw;*/
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+
+}
+.background-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1; /* behind everything */
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* allows clicks to pass through */
 }
 
 .main-nav {
     position: absolute;
     top: 10px;
     left: 50%;
-    width: 66.67vw;
+    width: 80vw;
     transform: translateX(-50%);
     background-color: #333;
     padding: 10px 30px;
@@ -50,11 +60,12 @@
 }
 
 .content-container {
-    width: 60vw; /* Half of the viewport width */
+    width: 70vw;
     height: 70vh;
-    margin: 20px auto; /* Center horizontally with some top margin */
+    left: 50%;
+    margin: auto; /* Center horizontally with some top margin */
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    background-color: rgba(0, 0, 0, 0.75); /* Semi-transparent black */
     color: white; /* Ensures text is readable */
     border-radius: 15px; /* Rounded corners */
     text-align: left; /* Left-justified text */
