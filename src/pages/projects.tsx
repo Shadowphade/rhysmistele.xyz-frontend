@@ -1,8 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import { CardGrid, CardContent } from "../components/cardgrid";
+import { useState } from "react";
 
 function Projects() {
     var cardArray: CardContent[] = [];
+
+    const [activeId, setActiveId] = useState("");
 
     var TestCard: CardContent = {
         title: "Test Title",
@@ -32,9 +35,9 @@ function Projects() {
 
     return (
        <Box className="content-container" sx={{ p: 4 }}>
-            <Typography variant='h3'> Projects </Typography>
+            <Typography variant='h3'> Projects</Typography>
             <hr />
-            <CardGrid cardContent={cardArray}/>
+            <CardGrid cardContent={cardArray} activeCardId={activeId} setActiveCardId={setActiveId}/>
         </Box>
     );
 }
