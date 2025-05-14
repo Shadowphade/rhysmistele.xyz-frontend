@@ -162,7 +162,7 @@ function create_particle_connections(particles: particle[]): Array<Array<boolean
             } else {
 
                 output[i][j] = true;
-                console.log(output);
+                //console.log(output);
             }
         }
     }
