@@ -1,37 +1,53 @@
 import { Box, Typography } from "@mui/material";
 import { CardGrid, CardContent } from "../components/cardgrid";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 
 function Projects() {
     var cardArray: CardContent[] = [];
 
     const [activeId, setActiveId] = useState("");
+    const navigate = useNavigate();
 
-    var TestCard: CardContent = {
-        title: "Test Title",
-        description: "This is a test Card",
-        imageUrl: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.9jIo4O9En26EVOkXaR9qoAHaEK%26cb%3Diwp2%26pid%3DApi&f=1&ipt=f4b1f45ff10ae7718104625f46d31fe4a14a7301452ff50248158dcbb5d7ea05&ipo=images"
+    var Pomodoro: CardContent = {
+        title: "Pomodoro Timer",
+        description: "A timer based focusing tool.",
+        imageUrl: ""
     }
     var TestCard1: CardContent = {
         title: "Test Title",
         description: "This is a test Card",
-        imageUrl: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.9jIo4O9En26EVOkXaR9qoAHaEK%26cb%3Diwp2%26pid%3DApi&f=1&ipt=f4b1f45ff10ae7718104625f46d31fe4a14a7301452ff50248158dcbb5d7ea05&ipo=images"
+        imageUrl: ""
     }
     var TestCard2: CardContent = {
         title: "Test Title",
         description: "This is a test Card",
-        imageUrl: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.9jIo4O9En26EVOkXaR9qoAHaEK%26cb%3Diwp2%26pid%3DApi&f=1&ipt=f4b1f45ff10ae7718104625f46d31fe4a14a7301452ff50248158dcbb5d7ea05&ipo=images"
+        imageUrl: ""
     }
     var TestCard3: CardContent = {
         title: "Test Title",
         description: "This is a test Card",
-        imageUrl: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.9jIo4O9En26EVOkXaR9qoAHaEK%26cb%3Diwp2%26pid%3DApi&f=1&ipt=f4b1f45ff10ae7718104625f46d31fe4a14a7301452ff50248158dcbb5d7ea05&ipo=images"
+        imageUrl: ""
     }
 
-    cardArray.push(TestCard);
+    cardArray.push(Pomodoro);
     cardArray.push(TestCard1);
     cardArray.push(TestCard2);
     cardArray.push(TestCard3);
+
+
+    useEffect (() => {
+        if(activeId == "") {
+            return;
+        }
+        if(activeId == "Test Title") {
+            return;
+        }
+        if(activeId == Pomodoro.title) {
+            navigate("pomodoro");
+        }
+
+    }, [activeId, navigate])
 
     return (
        <Box className="content-container" sx={{ p: 4 }}>

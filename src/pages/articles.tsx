@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { CardGrid, CardContent } from '../components/cardgrid'
 import { useNavigate, useParams } from 'react-router';
 import { MuiMarkdown } from 'mui-markdown';
-import { Highlight, themes } from 'prism-react-renderer';
+//import { Highlight, themes } from 'prism-react-renderer';
 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
