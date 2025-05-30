@@ -14,9 +14,9 @@ function Projects() {
         description: "A timer based focusing tool.",
         imageUrl: ""
     }
-    var TestCard1: CardContent = {
-        title: "Test Title",
-        description: "This is a test Card",
+    var RDP: CardContent = {
+        title: "Recursive Decent Parser",
+        description: "A custom parser written in C",
         imageUrl: ""
     }
     var TestCard2: CardContent = {
@@ -31,7 +31,7 @@ function Projects() {
     }
 
     cardArray.push(Pomodoro);
-    cardArray.push(TestCard1);
+    cardArray.push(RDP);
     cardArray.push(TestCard2);
     cardArray.push(TestCard3);
 
@@ -45,6 +45,9 @@ function Projects() {
         }
         if(activeId == Pomodoro.title) {
             navigate("pomodoro");
+        }
+        if(activeId == RDP.title) {
+            navigate("rdp");
         }
 
     }, [activeId, navigate])

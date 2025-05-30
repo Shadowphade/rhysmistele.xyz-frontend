@@ -7,6 +7,7 @@ import Home from './pages/home.tsx'
 import { Articles, Article } from './pages/articles.tsx'
 import Projects from './pages/projects.tsx'
 import { PomodoroUi } from './pages/projects/pomodoro.tsx'
+import Parser from './pages/projects/parser.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -18,6 +19,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="article/:name" element={<Article />} />
                 <Route path="projects" element={<Projects />} />
                 <Route path="projects/pomodoro" element={<PomodoroUi />} />
+                <Route path="projects/rdp" element={<Parser />} />
             </Route>
 
         </Routes>
